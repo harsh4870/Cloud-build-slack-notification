@@ -1,10 +1,10 @@
 const { IncomingWebhook } = require('@slack/client');
 const humanizeDuration = require('humanize-duration');
 const Octokit = require('@octokit/rest');
-const config = require('./config.json');
 
-module.exports.webhook = new IncomingWebhook(config.SLACK_WEBHOOK_URL);
-module.exports.status = config.GC_SLACK_STATUS;
+module.exports.webhook = new IncomingWebhook('ADD Slack Here');
+module.exports.status = '';
+const GITHUB_ACCESS_TOKEN = 'ADD Github Token Here';
 
 module.exports.getGithubCommit = async (build, octokit) => {
   try {
@@ -31,20 +31,22 @@ module.exports.getGithubCommit = async (build, octokit) => {
 // subscribe is the main function called by GCF.
 module.exports.subscribe = async (event) => {
   try {
-    const token = process.env.GITHUB_TOKEN;
+    const token = GITHUB_ACCESS_TOKEN;
     const octokit = token && new Octokit({
       auth: `token ${token}`,
     });
     const build = module.exports.eventToBuild(event.data);
-
     // Skip if the current status is not in the status list.
-    const status = module.exports.status || ['SUCCESS', 'FAILURE', 'INTERNAL_ERROR', 'TIMEOUT'];
+    //const status = module.exports.status || ['WORKING', 'QUEUED', 'SUCCESS', 'FAILURE', 'INTERNAL_ERROR', 'TIMEOUT'];
+    const status = ['QUEUED', 'SUCCESS', 'FAILURE', 'INTERNAL_ERROR', 'TIMEOUT'];
     if (status.indexOf(build.status) === -1) {
+      console.log('Status code',build.status)
+      console.log('Check status',status.indexOf(build.status) === -1)
       return;
     }
 
     const githubCommit = await module.exports.getGithubCommit(build, octokit);
-
+    console.log('githubCommit value',githubCommit)
     const message = await module.exports.createSlackMessage(build, githubCommit);
     // Send message to slack.
     module.exports.webhook.send(message);
