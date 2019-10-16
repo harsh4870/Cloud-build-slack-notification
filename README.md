@@ -42,3 +42,18 @@ Each build invokes 3 times the function:
 - when the build is queued
 - when the build starts
 - when the build reaches a final status.
+
+## Contributing
+
+Please read [CONTRIBUTING.md]() for details on our code of conduct, and the process for submitting pull requests to us.
+
+## Authors
+
+* **Harsh Manvar** - *Web Developer* - [harsh4870](https://github.com/harsh4870)
+
+
+## Acknowledgments
+
+* Hat tip to anyone whose code was used
+* Inspiration
+* etc
